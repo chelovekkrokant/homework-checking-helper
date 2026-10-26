@@ -1,75 +1,73 @@
-# React + TypeScript + Vite
+# Homework Checker
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Клиентское веб-приложение для обработки исходников домашнего задания и их проверки в интерактивном журнале оценок.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Возможности
 
-## React Compiler
+* **Подготовка и компоновка исходников**:
+* Пакетная регулировка яркости, контраста, бинаризация и поворот на 90°.
+* Нормализация фона бумаги с выравниванием баланса белого.
+* Кадрирование фрагментов заданий через `react-image-crop` с сохранением разрешения.
+* Свободное размещение и масштабирование вырезок на листе формата А4 (`react-rnd`).
+* Экспорт в PDF (`jspdf`), печатный JPG или копирование в буфер обмена.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-## Expanding the ESLint configuration
+* **Интерфейс оценивания работы**:
+* Сплит-экран: вьюер работы и журнал выставления баллов.
+* Панорамирование и зум (`react-zoom-pan-pinch`), быстрая вставка из буфера (`Ctrl+V` / `Cmd+V`).
+* Гибкая нумерация с любого целого числа, целочисленные степперы, кнопка «Макс» и чипы пресетов.
+* Автоматический подсчёт суммы, процента выполнения и итоговой оценки.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Стек технологий
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+* **Фронтенд**: React, Vite, TypeScript, CSS
+* **Библиотеки**: `react-rnd`, `react-image-crop`, `react-zoom-pan-pinch`, `jspdf`, `lucide-react`
+* **Качество кода**: ESLint, Prettier
+* **CI/CD**: GitHub Actions
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+---
+
+## Структура проекта
+
+```text
+├── .github/workflows/       # CI-пайплайн (сборка и линтинг)
+├── src/
+│   ├── components/
+│   │   ├── homework-grading/# Просмотрщик и журнал баллов
+│   │   ├── image-studio/    # Шаги обработки, холст А4, кадрирование
+│   │   └── layout/          # Шапка и навигация
+│   ├── types/               # TypeScript интерфейсы
+│   ├── utils/               # Обработка Canvas, фильтры, PDF, буфер
+│   ├── App.tsx              # Корневой переключатель экранов
+│   └── main.tsx             # Точка входа
+├── index.html
+└── vite.config.ts
+
+```
+
+---
+
+## Быстрый запуск
+
+```bash
+git clone https://github.com/chelovekkrokant/homework-checking-helper.git
+cd homework-checking-helper
+npm install
+npm run dev
 
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+Приложение доступно по адресу: `http://localhost:5173`.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+---
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Скрипты
 
-```
+* `npm run dev` — запуск локального dev-сервера
+* `npm run build` — проверка типов (`tsc -b`) и сборка проекта
+* `npm run lint` / `npm run lint:fix` — запуск линтера ESLint
+* `npm run format` — форматирование через Prettier
