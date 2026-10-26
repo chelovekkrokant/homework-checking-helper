@@ -1,26 +1,24 @@
-/* Базовый контейнер приложения */
+/* Базовый контейнер на весь viewport */
 .app-root {
   display: flex;
   flex-direction: column;
-  height: 100vh;
   width: 100vw;
+  height: 100vh;
   overflow: hidden;
-  background-color: #f4f5f7;
-  color: #1e293b;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 /* Шапка приложения */
 .app-header {
   height: 56px;
+  min-height: 56px;
   background-color: #ffffff;
   border-bottom: 1px solid #e2e8f0;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 20px;
-  box-sizing: border-box;
   flex-shrink: 0;
+  z-index: 20;
 }
 
 .header-brand {
@@ -63,26 +61,29 @@
   border-color: #2563eb;
 }
 
-/* Контейнеры экранов */
+/* Основная рабочая область под шапкой */
 .app-main {
   flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
-  position: relative;
 }
 
 .screen-container {
-  height: 100%;
-  width: 100%;
-  box-sizing: border-box;
+  flex: 1;
+  min-height: 0;
+  display: flex;
 }
 
-/* Стили Экрана 1 (Студия) */
+/* ==================== Экран 1: Подготовка фото ==================== */
 .studio-screen {
   display: flex;
   flex-direction: column;
   padding: 16px 20px;
   gap: 16px;
   overflow-y: auto;
+  width: 100%;
 }
 
 .studio-stepper-bar {
@@ -92,93 +93,35 @@
   padding: 8px;
   border-radius: 8px;
   border: 1px solid #e2e8f0;
+  flex-shrink: 0;
 }
 
 .stepper-item {
   background: none;
-  border: none;
+  border: 1px solid transparent;
   padding: 8px 14px;
   border-radius: 6px;
   font-size: 0.85rem;
   font-weight: 500;
   color: #64748b;
   cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.stepper-item:hover {
+  background-color: #f8fafc;
+  color: #1e293b;
 }
 
 .stepper-item.active {
   background: #eff6ff;
+  border-color: #bfdbfe;
   color: #2563eb;
   font-weight: 600;
 }
 
 .studio-content-area {
   flex: 1;
-}
-
-/* Стили Экрана 2 (Сплит 60% / 40%) */
-.grading-screen-layout {
-  display: grid;
-  grid-template-columns: 60% 40%;
-  height: 100%;
-}
-
-.grading-viewer-column {
-  background-color: #0f172a;
-  color: #f8fafc;
-  border-right: 1px solid #334155;
-  display: flex;
-  flex-direction: column;
-  padding: 16px;
-}
-
-.grading-panel-column {
-  background-color: #ffffff;
-  display: flex;
-  flex-direction: column;
-  padding: 16px;
-  overflow-y: auto;
-}
-
-.column-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid rgba(226, 232, 240, 0.2);
-}
-
-.grading-panel-column .column-header {
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.column-header h3 {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-.badge {
-  font-size: 0.75rem;
-  padding: 2px 8px;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-}
-
-.grading-panel-column .badge {
-  background-color: #f1f5f9;
-  color: #64748b;
-}
-
-.viewer-placeholder {
-  flex: 1;
-  border: 2px dashed #334155;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: #94a3b8;
 }
 
 .placeholder-card {
@@ -188,27 +131,51 @@
   padding: 24px;
 }
 
+.placeholder-card h3 {
+  margin-top: 0;
+  color: #0f172a;
+}
+
 .placeholder-description {
   color: #64748b;
   font-size: 0.95rem;
   line-height: 1.5;
 }
 
-/* ==================== Стили Экрана 2 ==================== */
+/* ==================== Экран 2: Сплит 60% / 40% ==================== */
+.grading-screen-layout {
+  display: grid;
+  grid-template-columns: 60% 40%;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
 
 /* Левая колонка (60%): Вьюер */
+.grading-viewer-column {
+  background-color: #0f172a;
+  color: #f8fafc;
+  border-right: 1px solid #1e293b;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  padding: 14px 16px;
+}
+
 .viewer-top-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
+  flex-shrink: 0;
 }
 
 .viewer-title {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 600;
   color: #cbd5e1;
 }
@@ -221,6 +188,7 @@
 
 .viewer-viewport-container {
   flex: 1;
+  min-height: 0;
   background-color: #020617;
   border: 1px solid #1e293b;
   border-radius: 8px;
@@ -240,6 +208,8 @@
   cursor: pointer;
   padding: 32px;
   text-align: center;
+  width: 100%;
+  height: 100%;
 }
 
 .viewer-empty-dropzone:hover .empty-icon {
@@ -284,7 +254,7 @@
   z-index: 10;
   display: flex;
   gap: 6px;
-  background: rgba(15, 23, 42, 0.8);
+  background: rgba(15, 23, 42, 0.85);
   backdrop-filter: blur(6px);
   padding: 6px;
   border-radius: 6px;
@@ -314,18 +284,21 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  min-height: 0;
   padding: 16px 20px;
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 .grading-meta-box {
   background-color: #f8fafc;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
-  padding: 12px 16px;
+  padding: 10px 14px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 .input-group {
@@ -349,7 +322,7 @@
 .base-input {
   border: 1px solid #cbd5e1;
   border-radius: 6px;
-  padding: 8px 12px;
+  padding: 7px 10px;
   font-size: 0.9rem;
   outline: none;
   transition: border-color 0.2s;
@@ -368,18 +341,21 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 16px;
+  margin-top: 12px;
   margin-bottom: 8px;
+  flex-shrink: 0;
 }
 
 .tasks-list-title {
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   color: #1e293b;
 }
 
+/* Зона скролла заданий */
 .tasks-scroll-container {
   flex: 1;
+  min-height: 120px;
   overflow-y: auto;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
@@ -390,7 +366,7 @@
 .tasks-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .tasks-empty-state {
@@ -431,7 +407,7 @@
 .task-input {
   border: 1px solid #cbd5e1;
   border-radius: 4px;
-  padding: 6px 8px;
+  padding: 5px 8px;
   font-size: 0.85rem;
   outline: none;
 }
@@ -452,7 +428,7 @@
 }
 
 .score-input {
-  width: 44px;
+  width: 48px;
   text-align: center;
 }
 
@@ -475,7 +451,7 @@
   background-color: #fee2e2;
 }
 
-/* Кнопки общие */
+/* Кнопки */
 .primary-btn {
   background-color: #2563eb;
   color: #ffffff;
@@ -526,25 +502,26 @@
   text-decoration: underline;
 }
 
-/* Карточка итогов */
+/* Футер с оценкой */
 .grading-footer {
-  margin-top: 12px;
+  margin-top: 10px;
+  flex-shrink: 0;
 }
 
 .summary-score-card {
   background: #f8fafc;
   border: 1px solid #cbd5e1;
   border-radius: 8px;
-  padding: 12px 16px;
+  padding: 10px 14px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .summary-row {
   display: flex;
   justify-content: space-between;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
 .summary-label {
@@ -573,15 +550,15 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 4px;
+  margin-top: 2px;
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
 }
 
 .summary-grade-badge {
   color: #ffffff;
-  padding: 2px 12px;
+  padding: 1px 10px;
   border-radius: 999px;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 700;
 }
