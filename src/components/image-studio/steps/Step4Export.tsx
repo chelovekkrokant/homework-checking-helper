@@ -12,22 +12,21 @@ interface Step4ExportProps {
 export const Step4Export: React.FC<Step4ExportProps> = ({ placedItems, onPrev }) => {
   const [copied, setCopied] = useState(false);
 
-  // Отрисовка листа А4 в Canvas для скачивания
   const renderSingleA4Canvas = async (): Promise<HTMLCanvasElement> => {
     const canvas = document.createElement('canvas');
-    // Высокое качество для сохранения А4
+    // Высокое печатное разрешение А4 (1240 x 1754 px)
     canvas.width = 1240;
     canvas.height = 1754;
     const ctx = canvas.getContext('2d');
     if (!ctx) return canvas;
 
-    // Белый фон
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Масштабный коэффициент отображения листа на экране к печатному 1240px
     const screenSheet = document.getElementById('a4-single-canvas');
-    const scaleFactor = screenSheet ? 1240 / screenSheet.clientWidth : 2.5;
+    const scaleFactor = screenSheet && screenSheet.clientWidth > 0
+      ? canvas.width / screenSheet.clientWidth
+      : 1240 / 480;
 
     for (const item of placedItems) {
       await new Promise<void>((resolve) => {
@@ -43,6 +42,7 @@ export const Step4Export: React.FC<Step4ExportProps> = ({ placedItems, onPrev })
           );
           resolve();
         };
+        img.onerror = () => resolve();
         img.src = item.sourceUrl;
       });
     }
