@@ -44,14 +44,24 @@ export const GradingPanelColumn: React.FC<GradingPanelColumnProps> = ({
           <label className="input-label" htmlFor="start-num">
             Начало нумерации:
           </label>
+          {/* Снято ограничение min=1: разрешено любое целое число */}
           <input
             id="start-num"
             type="number"
-            min="1"
+            step="1"
             className="base-input small-input"
             value={meta.startNumber}
-            onChange={(e) => onMetaChange('startNumber', parseInt(e.target.value, 10) || 1)}
+            onChange={(e) => {
+              const val = e.target.value;
+              if (val === '' || val === '-') {
+                onMetaChange('startNumber', val as unknown as number);
+              } else {
+                const parsed = parseInt(val, 10);
+                onMetaChange('startNumber', isNaN(parsed) ? 1 : parsed);
+              }
+            }}
           />
+          <span className="hint-text">(любое целое число)</span>
         </div>
       </div>
 

@@ -1,6 +1,6 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
-import { Upload, ZoomIn, ZoomOut, RotateCcw, Image as ImageIcon } from 'lucide-react';
+import { Upload, ZoomIn, ZoomOut, RotateCcw, Image as ImageIcon, Clipboard } from 'lucide-react';
 
 interface ImageViewerColumnProps {
   imageSrc: string | null;
@@ -21,6 +21,57 @@ export const ImageViewerColumn: React.FC<ImageViewerColumnProps> = ({
     }
   };
 
+  // Чтение изображения из буфера обмена по нажатию кнопки
+  const handlePasteFromClipboard = async () => {
+    try {
+      if (!navigator.clipboard?.read) {
+        alert('Чтение буфера не поддерживается в данном браузере. Воспользуйтесь сочетанием Ctrl+V / Cmd+V.');
+        return;
+      }
+      const clipboardItems = await navigator.clipboard.read();
+      for (const item of clipboardItems) {
+        const imageType = item.types.find((type) => type.startsWith('image/'));
+        if (imageType) {
+          const blob = await item.getType(imageType);
+          const file = new File([blob], 'clipboard_image.png', { type: imageType });
+          onImageUpload(file);
+          return;
+        }
+      }
+      alert('В буфере обмена нет изображения. Скопируйте картинку или скриншот и повторите.');
+    } catch (err) {
+      console.error('Ошибка доступа к буферу обмена:', err);
+      alert('Не удалось получить доступ к буферу обмена. Разрешите доступ к буферу в браузере или используйте Ctrl+V / Cmd+V.');
+    }
+  };
+
+  // Глобальный перехват сочетания клавиш Ctrl+V / Cmd+V на экране
+  useEffect(() => {
+    const handlePasteEvent = (e: ClipboardEvent) => {
+      // Игнорируем вставку, если фокус находится в полях ввода текста/чисел
+      const activeElement = document.activeElement;
+      if (
+        activeElement instanceof HTMLInputElement ||
+        activeElement instanceof HTMLTextAreaElement
+      ) {
+        return;
+      }
+
+      if (e.clipboardData && e.clipboardData.files.length > 0) {
+        const file = e.clipboardData.files[0];
+        if (file.type.startsWith('image/')) {
+          e.preventDefault();
+          onImageUpload(file);
+        }
+      }
+    };
+
+    window.addEventListener('paste', handlePasteEvent);
+    return () => {
+      window.removeEventListener('paste', handlePasteEvent);
+    };
+  }, [onImageUpload]);
+
   return (
     <section className="grading-viewer-column">
       <div className="viewer-top-bar">
@@ -33,9 +84,18 @@ export const ImageViewerColumn: React.FC<ImageViewerColumnProps> = ({
             type="file"
             ref={fileInputRef}
             onChange={handleFileChange}
-            accept="image/*,.pdf"
+            accept="image/*"
             style={{ display: 'none' }}
           />
+          <button
+            type="button"
+            className="secondary-btn"
+            onClick={handlePasteFromClipboard}
+            title="Вставить скопированное изображение из буфера обмена (или нажмите Ctrl+V)"
+          >
+            <Clipboard size={14} />
+            Вставить из буфера
+          </button>
           <button
             type="button"
             className="secondary-btn"
@@ -58,13 +118,26 @@ export const ImageViewerColumn: React.FC<ImageViewerColumnProps> = ({
 
       <div className="viewer-viewport-container">
         {!imageSrc ? (
-          <div
-            className="viewer-empty-dropzone"
-            onClick={() => fileInputRef.current?.click()}
-          >
+          <div className="viewer-empty-dropzone">
             <Upload size={40} className="empty-icon" />
-            <p className="empty-text">Нажмите, чтобы загрузить изображение проверенного ДЗ</p>
-            <span className="empty-subtext">JPG, PNG, WebP (полностью независимый файл)</span>
+            <p className="empty-text">Загрузите изображение проверенного ДЗ</p>
+            <div className="empty-actions-row">
+              <button
+                type="button"
+                className="primary-btn"
+                onClick={handlePasteFromClipboard}
+              >
+                <Clipboard size={15} /> Вставить из буфера (Ctrl + V)
+              </button>
+              <button
+                type="button"
+                className="secondary-btn"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <Upload size={15} /> Выбрать файл с диска
+              </button>
+            </div>
+            <span className="empty-subtext">Поддерживаются форматы JPG, PNG, WebP</span>
           </div>
         ) : (
           <TransformWrapper

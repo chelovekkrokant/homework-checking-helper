@@ -1,5 +1,5 @@
 import React from 'react';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Plus, Minus, CheckCircle } from 'lucide-react';
 import type { HomeworkTask } from '../../types';
 
 interface TaskItemRowProps {
@@ -9,47 +9,152 @@ interface TaskItemRowProps {
 }
 
 export const TaskItemRow: React.FC<TaskItemRowProps> = ({ task, onUpdate, onDelete }) => {
+  const adjustEarned = (delta: number) => {
+    const current = Math.round(Number(task.earnedScore) || 0);
+    const max = Math.round(Number(task.maxScore) || 0);
+    const nextVal = Math.max(0, Math.min(max, current + delta));
+    onUpdate(task.id, 'earnedScore', nextVal);
+  };
+
+  const adjustMax = (delta: number) => {
+    const current = Math.round(Number(task.maxScore) || 1);
+    const nextVal = Math.max(1, current + delta);
+    onUpdate(task.id, 'maxScore', nextVal);
+  };
+
+  const setMaxEarned = () => {
+    onUpdate(task.id, 'earnedScore', Math.round(Number(task.maxScore) || 0));
+  };
+
+  const handleEarnedChange = (valStr: string) => {
+    if (valStr === '') {
+      onUpdate(task.id, 'earnedScore', 0);
+      return;
+    }
+    const intVal = parseInt(valStr, 10);
+    onUpdate(task.id, 'earnedScore', isNaN(intVal) ? 0 : Math.max(0, intVal));
+  };
+
+  const handleMaxChange = (valStr: string) => {
+    if (valStr === '') {
+      onUpdate(task.id, 'maxScore', 1);
+      return;
+    }
+    const intVal = parseInt(valStr, 10);
+    onUpdate(task.id, 'maxScore', isNaN(intVal) ? 1 : Math.max(1, intVal));
+  };
+
   return (
-    <div className="task-item-row">
-      <div className="task-number-badge">№{task.taskNumber}</div>
-      <div className="task-name-input-wrap">
+    <div className="task-item-card">
+      {/* Верхняя строка: номер, имя, удаление */}
+      <div className="task-item-header">
+        <div className="task-number-pill">№{task.taskNumber}</div>
         <input
           type="text"
-          className="task-input name-input"
+          className="task-name-input"
           value={task.name}
           onChange={(e) => onUpdate(task.id, 'name', e.target.value)}
           placeholder={`Задание ${task.taskNumber}`}
         />
+        <button
+          type="button"
+          className="task-delete-icon-btn"
+          onClick={() => onDelete(task.id)}
+          title="Удалить задание"
+        >
+          <Trash2 size={15} />
+        </button>
       </div>
-      <div className="task-scores-wrap">
-        <input
-          type="number"
-          min="0"
-          step="0.5"
-          className="task-input score-input"
-          value={task.earnedScore === 0 && isNaN(task.earnedScore) ? '' : task.earnedScore}
-          onChange={(e) => onUpdate(task.id, 'earnedScore', parseFloat(e.target.value) || 0)}
-          title="Полученный балл"
-        />
-        <span className="scores-divider">/</span>
-        <input
-          type="number"
-          min="0.5"
-          step="0.5"
-          className="task-input score-input max-score"
-          value={task.maxScore === 0 && isNaN(task.maxScore) ? '' : task.maxScore}
-          onChange={(e) => onUpdate(task.id, 'maxScore', parseFloat(e.target.value) || 0)}
-          title="Максимальный балл"
-        />
+
+      {/* Нижний блок: две колонки (Балл ученика | Максимальный балл) */}
+      <div className="task-item-controls-grid">
+        {/* Колонка набранного балла */}
+        <div className="score-sub-block">
+          <div className="control-label-row">
+            <span className="control-label">Балл ученика:</span>
+            <button
+              type="button"
+              className={`full-score-btn ${task.earnedScore === task.maxScore && task.maxScore > 0 ? 'active' : ''}`}
+              onClick={setMaxEarned}
+              title="Поставить максимум"
+            >
+              <CheckCircle size={12} />
+              Макс
+            </button>
+          </div>
+          <div className="score-stepper">
+            <button
+              type="button"
+              className="stepper-btn"
+              onClick={() => adjustEarned(-1)}
+              title="Уменьшить"
+            >
+              <Minus size={13} />
+            </button>
+            <input
+              type="number"
+              step="1"
+              min="0"
+              className="score-stepper-input"
+              value={task.earnedScore}
+              onChange={(e) => handleEarnedChange(e.target.value)}
+            />
+            <button
+              type="button"
+              className="stepper-btn"
+              onClick={() => adjustEarned(1)}
+              title="Увеличить"
+            >
+              <Plus size={13} />
+            </button>
+          </div>
+        </div>
+
+        {/* Колонка максимального балла */}
+        <div className="score-sub-block">
+          <div className="control-label-row">
+            <span className="control-label">Максимум:</span>
+            <div className="quick-max-chips">
+              {[1, 2, 5, 10].map((preset) => (
+                <button
+                  key={preset}
+                  type="button"
+                  className={`chip-btn ${task.maxScore === preset ? 'active' : ''}`}
+                  onClick={() => onUpdate(task.id, 'maxScore', preset)}
+                >
+                  {preset}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="score-stepper">
+            <button
+              type="button"
+              className="stepper-btn"
+              onClick={() => adjustMax(-1)}
+              title="Уменьшить"
+            >
+              <Minus size={13} />
+            </button>
+            <input
+              type="number"
+              step="1"
+              min="1"
+              className="score-stepper-input max-val"
+              value={task.maxScore}
+              onChange={(e) => handleMaxChange(e.target.value)}
+            />
+            <button
+              type="button"
+              className="stepper-btn"
+              onClick={() => adjustMax(1)}
+              title="Увеличить"
+            >
+              <Plus size={13} />
+            </button>
+          </div>
+        </div>
       </div>
-      <button
-        type="button"
-        className="task-delete-btn"
-        onClick={() => onDelete(task.id)}
-        title="Удалить задание"
-      >
-        <Trash2 size={16} />
-      </button>
     </div>
   );
 };

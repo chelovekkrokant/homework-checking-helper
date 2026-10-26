@@ -5,16 +5,13 @@ import { ImageViewerColumn } from './ImageViewerColumn';
 import { GradingPanelColumn } from './GradingPanelColumn';
 
 export const HomeworkGradingScreen: React.FC = () => {
-  // Независимое изображение для Экрана 2
   const [imageSrc, setImageSrc] = useState<string | null>(null);
 
-  // Метаинформация о ДЗ
   const [meta, setMeta] = useState<HomeworkMeta>({
     title: 'ДЗ Занятие 1',
     startNumber: 1,
   });
 
-  // Список заданий
   const [tasks, setTasks] = useState<HomeworkTask[]>([
     { id: '1', name: 'Задание 1', taskNumber: 1, earnedScore: 9, maxScore: 10 },
     { id: '2', name: 'Задание 2', taskNumber: 2, earnedScore: 7, maxScore: 10 },
@@ -32,9 +29,8 @@ export const HomeworkGradingScreen: React.FC = () => {
   const handleMetaChange = (field: keyof HomeworkMeta, value: string | number) => {
     setMeta((prev) => {
       const nextMeta = { ...prev, [field]: value };
-      // Если изменился стартовый номер, автоматически обновляем порядковые номера заданий
-      if (field === 'startNumber' && typeof value === 'number') {
-        const start = value || 1;
+      if (field === 'startNumber') {
+        const start = typeof value === 'number' ? Math.round(value) : parseInt(String(value), 10) || 0;
         setTasks((prevTasks) =>
           prevTasks.map((t, idx) => {
             const nextNum = start + idx;
@@ -52,7 +48,8 @@ export const HomeworkGradingScreen: React.FC = () => {
 
   const handleAddTask = () => {
     setTasks((prev) => {
-      const nextNumber = meta.startNumber + prev.length;
+      const start = Number(meta.startNumber) || 1;
+      const nextNumber = start + prev.length;
       const newTask: HomeworkTask = {
         id: crypto.randomUUID(),
         name: `Задание ${nextNumber}`,
@@ -70,16 +67,27 @@ export const HomeworkGradingScreen: React.FC = () => {
     value: string | number
   ) => {
     setTasks((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, [field]: value } : t))
+      prev.map((t): HomeworkTask => {
+        if (t.id === id) {
+          if (field === 'name') {
+            return { ...t, name: String(value) };
+          }
+          if (field === 'earnedScore' || field === 'maxScore') {
+            const intVal = Math.round(Number(value)) || 0;
+            return { ...t, [field]: intVal };
+          }
+        }
+        return t;
+      })
     );
   };
 
   const handleDeleteTask = (id: string) => {
     setTasks((prev) => {
       const filtered = prev.filter((t) => t.id !== id);
-      // Перенумеровываем после удаления
+      const start = Number(meta.startNumber) || 1;
       return filtered.map((t, idx) => {
-        const nextNum = meta.startNumber + idx;
+        const nextNum = start + idx;
         return {
           ...t,
           taskNumber: nextNum,
@@ -88,7 +96,6 @@ export const HomeworkGradingScreen: React.FC = () => {
     });
   };
 
-  // Мемоизированный расчет итогов
   const summary = useMemo(() => calculateHomeworkSummary(tasks), [tasks]);
 
   return (
