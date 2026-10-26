@@ -11,8 +11,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "jspdf": "^4.2.1",
+    "lucide-react": "^1.61.0",
     "react": "^19.3.1",
-    "react-dom": "^19.3.1"
+    "react-dom": "^19.3.1",
+    "react-image-crop": "^11.1.2",
+    "react-zoom-pan-pinch": "^4.2.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
