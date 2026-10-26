@@ -35,10 +35,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Checks & Build
+      - name: Check code formatting & types
         run: |
+          npx prettier --check "src/**/*.{ts,tsx,css}"
           npm run lint
-          npm run typecheck
+          npx tsc -b
+
+      - name: Build
+        run: |
           npm run build
 
       - name: Upload artifact

@@ -1,24 +1,18 @@
-import type { ImageFilterSettings } from '../types';
-import type { PixelCrop } from 'react-image-crop';
+import type { ImageFilterSettings } from "../types";
+import type { PixelCrop } from "react-image-crop";
 
-/**
- * Продвинутый баланс белого для документов и тетрадей:
- * 1. Игнорирует случайные шумы/блики через 98-й перцентиль яркости.
- * 2. Вычисляет средний цвет бумаги (самых ярких пикселей).
- * 3. Выравнивает цветовые каналы фона и подтягивает бумагу к белому цвету.
- */
 function applyWhiteBalance(data: Uint8ClampedArray) {
   const pixelCount = data.length / 4;
   if (pixelCount === 0) return;
 
-  // 1. Построение гистограммы яркости (Luma)
   const histogram = new Int32Array(256);
   for (let i = 0; i < data.length; i += 4) {
-    const luma = Math.round(0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2]);
+    const luma = Math.round(
+      0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2],
+    );
     histogram[luma]++;
   }
 
-  // 2. Находим порог 98-го перцентиля (отсекаем паразитные выбросы/блики)
   const thresholdCount = pixelCount * 0.98;
   let accumulated = 0;
   let whiteThreshold = 255;
@@ -31,10 +25,8 @@ function applyWhiteBalance(data: Uint8ClampedArray) {
     }
   }
 
-  // Защитный минимум: порог не должен быть слишком темным (чернила не трогаем)
   whiteThreshold = Math.max(whiteThreshold, 140);
 
-  // 3. Вычисляем средние R, G, B для пикселей, попавших в диапазон белой бумаги
   let sumR = 0;
   let sumG = 0;
   let sumB = 0;
@@ -56,42 +48,37 @@ function applyWhiteBalance(data: Uint8ClampedArray) {
   const avgG = sumG / sampleCount;
   const avgB = sumB / sampleCount;
 
-  // 4. Коэффициенты растяжения каждого канала до чистого белого (255)
   const targetWhite = 255;
   const scaleR = targetWhite / Math.max(avgR, 100);
   const scaleG = targetWhite / Math.max(avgG, 100);
   const scaleB = targetWhite / Math.max(avgB, 100);
 
-  // 5. Применение коррекции с плавным сохранением черных чернил (гамма-кривая)
   for (let i = 0; i < data.length; i += 4) {
     data[i] = Math.min(255, Math.round(data[i] * scaleR));
     data[i + 1] = Math.min(255, Math.round(data[i + 1] * scaleG));
     data[i + 2] = Math.min(255, Math.round(data[i + 2] * scaleB));
   }
 }
-/**
- * Рендерит изображение с учетом поворота, яркости, контраста, баланса белого и бинаризации
- */
 export async function processImageFilters(
   imageUrl: string,
   rotation: number,
-  filters: ImageFilterSettings
+  filters: ImageFilterSettings,
 ): Promise<string> {
   return new Promise((resolve, reject) => {
     const img = new Image();
-    img.crossOrigin = 'anonymous';
+    img.crossOrigin = "anonymous";
     img.onload = () => {
       const isRotatedSideways = rotation % 180 !== 0;
       const targetWidth = isRotatedSideways ? img.height : img.width;
       const targetHeight = isRotatedSideways ? img.width : img.height;
 
-      const canvas = document.createElement('canvas');
+      const canvas = document.createElement("canvas");
       canvas.width = targetWidth;
       canvas.height = targetHeight;
-      const ctx = canvas.getContext('2d');
+      const ctx = canvas.getContext("2d");
 
       if (!ctx) {
-        reject(new Error('Не удалось получить CanvasRenderingContext2D'));
+        reject(new Error("Не удалось получить CanvasRenderingContext2D"));
         return;
       }
 
@@ -106,7 +93,8 @@ export async function processImageFilters(
         applyWhiteBalance(d);
       }
 
-      const contrastFactor = (259 * (filters.contrast + 255)) / (255 * (259 - filters.contrast));
+      const contrastFactor =
+        (259 * (filters.contrast + 255)) / (255 * (259 - filters.contrast));
       const brightnessShift = (filters.brightness / 100) * 255;
 
       for (let i = 0; i < d.length; i += 4) {
@@ -136,42 +124,36 @@ export async function processImageFilters(
       }
 
       ctx.putImageData(imgData, 0, 0);
-      resolve(canvas.toDataURL('image/jpeg', 0.92));
+      resolve(canvas.toDataURL("image/jpeg", 0.92));
     };
     img.onerror = (err) => reject(err);
     img.src = imageUrl;
   });
 }
 
-/**
- * Кадрирует изображение с учетом масштаба между отображаемым размером (DOM) и естественным (natural)
- */
 export async function getCroppedImgDataUrl(
   imageElement: HTMLImageElement,
-  crop: PixelCrop
+  crop: PixelCrop,
 ): Promise<string> {
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
 
   if (!ctx) {
-    throw new Error('Не удалось получить 2D контекст для кадрирования');
+    throw new Error("Не удалось получить 2D контекст для кадрирования");
   }
 
-  // Коэффициенты масштабирования между реальным размером файла и размером на экране
   const scaleX = imageElement.naturalWidth / imageElement.width;
   const scaleY = imageElement.naturalHeight / imageElement.height;
 
-  // Истинные координаты в пикселях исходного изображения
   const pixelX = crop.x * scaleX;
   const pixelY = crop.y * scaleY;
   const pixelWidth = crop.width * scaleX;
   const pixelHeight = crop.height * scaleY;
 
-  // Устанавливаем размер результирующего canvas равным реальному вырезанному фрагменту
   canvas.width = Math.max(1, Math.round(pixelWidth));
   canvas.height = Math.max(1, Math.round(pixelHeight));
 
-  ctx.imageSmoothingQuality = 'high';
+  ctx.imageSmoothingQuality = "high";
 
   ctx.drawImage(
     imageElement,
@@ -182,8 +164,8 @@ export async function getCroppedImgDataUrl(
     0,
     0,
     canvas.width,
-    canvas.height
+    canvas.height,
   );
 
-  return canvas.toDataURL('image/jpeg', 0.95);
+  return canvas.toDataURL("image/jpeg", 0.95);
 }

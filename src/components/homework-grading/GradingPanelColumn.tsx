@@ -1,15 +1,19 @@
-import React from 'react';
-import { Plus } from 'lucide-react';
-import type { HomeworkMeta, HomeworkTask, HomeworkSummary } from '../../types';
-import { TaskItemRow } from './TaskItemRow';
-import { SummaryScore } from './SummaryScore';
+import React from "react";
+import { Plus } from "lucide-react";
+import type { HomeworkMeta, HomeworkTask, HomeworkSummary } from "../../types";
+import { TaskItemRow } from "./TaskItemRow";
+import { SummaryScore } from "./SummaryScore";
 
 interface GradingPanelColumnProps {
   meta: HomeworkMeta;
   onMetaChange: (field: keyof HomeworkMeta, value: string | number) => void;
   tasks: HomeworkTask[];
   onAddTask: () => void;
-  onUpdateTask: (id: string, field: 'name' | 'earnedScore' | 'maxScore', value: string | number) => void;
+  onUpdateTask: (
+    id: string,
+    field: "name" | "earnedScore" | "maxScore",
+    value: string | number,
+  ) => void;
   onDeleteTask: (id: string) => void;
   summary: HomeworkSummary;
 }
@@ -35,7 +39,7 @@ export const GradingPanelColumn: React.FC<GradingPanelColumnProps> = ({
             type="text"
             className="base-input"
             value={meta.title}
-            onChange={(e) => onMetaChange('title', e.target.value)}
+            onChange={(e) => onMetaChange("title", e.target.value)}
             placeholder="Например: ДЗ Алгебра 26.10.2026"
           />
         </div>
@@ -44,7 +48,7 @@ export const GradingPanelColumn: React.FC<GradingPanelColumnProps> = ({
           <label className="input-label" htmlFor="start-num">
             Начало нумерации:
           </label>
-          {/* Снято ограничение min=1: разрешено любое целое число */}
+          {}
           <input
             id="start-num"
             type="number"
@@ -53,11 +57,11 @@ export const GradingPanelColumn: React.FC<GradingPanelColumnProps> = ({
             value={meta.startNumber}
             onChange={(e) => {
               const val = e.target.value;
-              if (val === '' || val === '-') {
-                onMetaChange('startNumber', val as unknown as number);
+              if (val === "" || val === "-") {
+                onMetaChange("startNumber", val as unknown as number);
               } else {
                 const parsed = parseInt(val, 10);
-                onMetaChange('startNumber', isNaN(parsed) ? 1 : parsed);
+                onMetaChange("startNumber", isNaN(parsed) ? 1 : parsed);
               }
             }}
           />
@@ -67,7 +71,11 @@ export const GradingPanelColumn: React.FC<GradingPanelColumnProps> = ({
 
       <div className="tasks-list-header">
         <span className="tasks-list-title">Задания ({tasks.length})</span>
-        <button type="button" className="primary-btn add-btn" onClick={onAddTask}>
+        <button
+          type="button"
+          className="primary-btn add-btn"
+          onClick={onAddTask}
+        >
           <Plus size={16} />
           Добавить задание
         </button>
@@ -76,7 +84,8 @@ export const GradingPanelColumn: React.FC<GradingPanelColumnProps> = ({
       <div className="tasks-scroll-container">
         {tasks.length === 0 ? (
           <div className="tasks-empty-state">
-            Список пуст. Нажмите «Добавить задание», чтобы начать выставление баллов.
+            Список пуст. Нажмите «Добавить задание», чтобы начать выставление
+            баллов.
           </div>
         ) : (
           <div className="tasks-list">

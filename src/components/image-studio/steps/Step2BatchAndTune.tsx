@@ -1,6 +1,15 @@
-import React from 'react';
-import { Sliders, Sun, Contrast, FileText, Wand2, RotateCw, Trash2, ArrowRight } from 'lucide-react';
-import type { StudioImageItem, ImageFilterSettings } from '../../../types';
+import React from "react";
+import {
+  Sliders,
+  Sun,
+  Contrast,
+  FileText,
+  Wand2,
+  RotateCw,
+  Trash2,
+  ArrowRight,
+} from "lucide-react";
+import type { StudioImageItem, ImageFilterSettings } from "../../../types";
 
 interface Step2BatchAndTuneProps {
   images: StudioImageItem[];
@@ -25,8 +34,8 @@ export const Step2BatchAndTune: React.FC<Step2BatchAndTuneProps> = ({
   onNext,
   onPrev,
 }) => {
-  // Проверяем, активен ли баланс белого для всех изображений
-  const isAllWbActive = images.length > 0 && images.every((img) => img.filters.whiteBalance);
+  const isAllWbActive =
+    images.length > 0 && images.every((img) => img.filters.whiteBalance);
 
   return (
     <div className="step-card">
@@ -34,18 +43,25 @@ export const Step2BatchAndTune: React.FC<Step2BatchAndTuneProps> = ({
         <div>
           <h3>Шаг 2: Цветокоррекция, баланс белого и поворот</h3>
           <p className="step-description">
-            Результаты отображаются мгновенно. Баланс белого и поворот можно применять как ко всем фото, так и к каждому отдельно.
+            Результаты отображаются мгновенно. Баланс белого и поворот можно
+            применять как ко всем фото, так и к каждому отдельно.
           </p>
         </div>
         <Sliders size={22} className="text-muted" />
       </div>
 
-      {/* Верхняя панель: Общие настройки пакета */}
+      {}
       <div className="batch-controls-box">
         <div className="filter-slider-group">
           <div className="slider-label">
             <Sun size={16} />
-            <span>Яркость: {batchFilters.brightness > 0 ? `+${batchFilters.brightness}` : batchFilters.brightness}%</span>
+            <span>
+              Яркость:{" "}
+              {batchFilters.brightness > 0
+                ? `+${batchFilters.brightness}`
+                : batchFilters.brightness}
+              %
+            </span>
           </div>
           <input
             type="range"
@@ -53,7 +69,10 @@ export const Step2BatchAndTune: React.FC<Step2BatchAndTuneProps> = ({
             max="100"
             value={batchFilters.brightness}
             onChange={(e) =>
-              onBatchFilterChange({ ...batchFilters, brightness: Number(e.target.value) })
+              onBatchFilterChange({
+                ...batchFilters,
+                brightness: Number(e.target.value),
+              })
             }
           />
         </div>
@@ -61,7 +80,13 @@ export const Step2BatchAndTune: React.FC<Step2BatchAndTuneProps> = ({
         <div className="filter-slider-group">
           <div className="slider-label">
             <Contrast size={16} />
-            <span>Контраст: {batchFilters.contrast > 0 ? `+${batchFilters.contrast}` : batchFilters.contrast}%</span>
+            <span>
+              Контраст:{" "}
+              {batchFilters.contrast > 0
+                ? `+${batchFilters.contrast}`
+                : batchFilters.contrast}
+              %
+            </span>
           </div>
           <input
             type="range"
@@ -69,7 +94,10 @@ export const Step2BatchAndTune: React.FC<Step2BatchAndTuneProps> = ({
             max="100"
             value={batchFilters.contrast}
             onChange={(e) =>
-              onBatchFilterChange({ ...batchFilters, contrast: Number(e.target.value) })
+              onBatchFilterChange({
+                ...batchFilters,
+                contrast: Number(e.target.value),
+              })
             }
           />
         </div>
@@ -80,26 +108,36 @@ export const Step2BatchAndTune: React.FC<Step2BatchAndTuneProps> = ({
               type="checkbox"
               checked={batchFilters.binarization}
               onChange={(e) =>
-                onBatchFilterChange({ ...batchFilters, binarization: e.target.checked })
+                onBatchFilterChange({
+                  ...batchFilters,
+                  binarization: e.target.checked,
+                })
               }
             />
             <FileText size={16} />
             <span>Ч/Б бинаризация для всех</span>
           </label>
 
-          {/* Кнопка с переключением применения/отмены баланса белого для всех */}
+          {}
           <button
             type="button"
-            className={`secondary-btn ${isAllWbActive ? 'active-filter-btn' : ''}`}
+            className={`secondary-btn ${isAllWbActive ? "active-filter-btn" : ""}`}
             onClick={onApplyBatchWhiteBalance}
-            title={isAllWbActive ? 'Отменить баланс белого для всех фото' : 'Применить баланс белого для всех фото'}
+            title={
+              isAllWbActive
+                ? "Отменить баланс белого для всех фото"
+                : "Применить баланс белого для всех фото"
+            }
           >
-            <Wand2 size={16} /> {isAllWbActive ? 'ББ включен (для всех)' : 'Баланс белого (для всех)'}
+            <Wand2 size={16} />{" "}
+            {isAllWbActive
+              ? "ББ включен (для всех)"
+              : "Баланс белого (для всех)"}
           </button>
         </div>
       </div>
 
-      {/* Сетка фото с мгновенным результатом и индивидуальным управлением */}
+      {}
       <div className="thumbnails-grid">
         {images.map((img, idx) => (
           <div key={img.id} className="thumbnail-card">
@@ -122,9 +160,13 @@ export const Step2BatchAndTune: React.FC<Step2BatchAndTuneProps> = ({
               </button>
               <button
                 type="button"
-                className={`secondary-btn small-btn ${img.filters.whiteBalance ? 'active-filter-btn' : ''}`}
+                className={`secondary-btn small-btn ${img.filters.whiteBalance ? "active-filter-btn" : ""}`}
                 onClick={() => onSingleWhiteBalance(img.id)}
-                title={img.filters.whiteBalance ? 'Отменить баланс белого для этого фото' : 'Применить баланс белого выборочно'}
+                title={
+                  img.filters.whiteBalance
+                    ? "Отменить баланс белого для этого фото"
+                    : "Применить баланс белого выборочно"
+                }
               >
                 <Wand2 size={13} /> ББ
               </button>

@@ -1,5 +1,5 @@
-import React from 'react';
-import type { AppTab } from '../../types';
+import React from "react";
+import type { AppTab } from "../../types";
 
 interface HeaderProps {
   activeTab: AppTab;
@@ -16,17 +16,17 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, onTabChange }) => {
       <nav className="header-nav">
         <button
           type="button"
-          className={`nav-tab-button ${activeTab === 'studio' ? 'active' : ''}`}
-          onClick={() => onTabChange('studio')}
+          className={`nav-tab-button ${activeTab === "studio" ? "active" : ""}`}
+          onClick={() => onTabChange("studio")}
         >
-          (1) Обработка фото
+          Обработка фото
         </button>
         <button
           type="button"
-          className={`nav-tab-button ${activeTab === 'grading' ? 'active' : ''}`}
-          onClick={() => onTabChange('grading')}
+          className={`nav-tab-button ${activeTab === "grading" ? "active" : ""}`}
+          onClick={() => onTabChange("grading")}
         >
-          (2) Оценивание
+          Оценивание
         </button>
       </nav>
     </header>

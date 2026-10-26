@@ -1,4 +1,4 @@
-export * from './imageStudio';
-export * from './grading';
+export * from "./imageStudio";
+export * from "./grading";
 
-export type AppTab = 'studio' | 'grading';
+export type AppTab = "studio" | "grading";

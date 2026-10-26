@@ -1,21 +1,23 @@
-import React, { useState } from 'react';
-import type { StudioStep, StudioImageItem, ImageFilterSettings, PlacedCanvasItem } from '../../types';
-import { processImageFilters } from '../../utils/canvasFilters';
-import { Step1Upload } from './steps/Step1Upload';
-import { Step2BatchAndTune } from './steps/Step2BatchAndTune';
-import { Step3CollageA4 } from './steps/Step3CollageA4';
-import { Step4Export } from './steps/Step4Export';
+import React, { useState } from "react";
+import type {
+  StudioStep,
+  StudioImageItem,
+  ImageFilterSettings,
+  PlacedCanvasItem,
+} from "../../types";
+import { processImageFilters } from "../../utils/canvasFilters";
+import { Step1Upload } from "./steps/Step1Upload";
+import { Step2BatchAndTune } from "./steps/Step2BatchAndTune";
+import { Step3CollageA4 } from "./steps/Step3CollageA4";
+import { Step4Export } from "./steps/Step4Export";
 
 export const ImageStudioScreen: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<StudioStep>(1);
 
-  // Исходные фотографии
   const [images, setImages] = useState<StudioImageItem[]>([]);
 
-  // Элементы, свободно размещенные на единственном листе А4
   const [placedItems, setPlacedItems] = useState<PlacedCanvasItem[]>([]);
 
-  // Пакетные параметры фильтров
   const [batchFilters, setBatchFilters] = useState<ImageFilterSettings>({
     brightness: 0,
     contrast: 0,
@@ -24,13 +26,12 @@ export const ImageStudioScreen: React.FC = () => {
   });
 
   const stepsList: { step: StudioStep; label: string }[] = [
-    { step: 1, label: '1. Загрузка & Превью' },
-    { step: 2, label: '2. Фильтры, Баланс белого & Поворот' },
-    { step: 3, label: '3. Коллаж на листе А4' },
-    { step: 4, label: '4. Экспорт' },
+    { step: 1, label: "Загрузка" },
+    { step: 2, label: "Обработка" },
+    { step: 3, label: "Коллаж" },
+    { step: 4, label: "Экспорт" },
   ];
 
-  // Загрузка фото на шаге 1
   const handleUpload = (fileList: FileList) => {
     const defaultFilter: ImageFilterSettings = { ...batchFilters };
     const newItems: StudioImageItem[] = Array.from(fileList).map((file) => {
@@ -51,7 +52,6 @@ export const ImageStudioScreen: React.FC = () => {
     setImages((prev) => prev.filter((i) => i.id !== id));
   };
 
-  // Мгновенное обновление фильтров всего пакета
   const handleBatchFilterChange = async (newFilters: ImageFilterSettings) => {
     setBatchFilters(newFilters);
     const updated = await Promise.all(
@@ -63,22 +63,22 @@ export const ImageStudioScreen: React.FC = () => {
         const processedUrl = await processImageFilters(
           img.originalUrl,
           img.rotation,
-          mergedFilters
+          mergedFilters,
         );
         return {
           ...img,
           filters: mergedFilters,
           previewUrl: processedUrl,
         };
-      })
+      }),
     );
     setImages(updated);
   };
 
-// Переключение (toggle) баланса белого для всех фото сразу
   const handleApplyBatchWhiteBalance = async () => {
-    // Если баланс белого уже активен в пакете или включен хотя бы у одной картинки, выключаем его для всех
-    const isAnyWbActive = batchFilters.whiteBalance || images.some((img) => img.filters.whiteBalance);
+    const isAnyWbActive =
+      batchFilters.whiteBalance ||
+      images.some((img) => img.filters.whiteBalance);
     const nextWbState = !isAnyWbActive;
 
     const nextBatchFilters = { ...batchFilters, whiteBalance: nextWbState };
@@ -93,19 +93,18 @@ export const ImageStudioScreen: React.FC = () => {
         const processedUrl = await processImageFilters(
           img.originalUrl,
           img.rotation,
-          nextFilters
+          nextFilters,
         );
         return {
           ...img,
           filters: nextFilters,
           previewUrl: processedUrl,
         };
-      })
+      }),
     );
     setImages(updated);
   };
 
-  // Поворот одного фото на 90 градусов
   const handleSingleRotate = async (id: string) => {
     const updated = await Promise.all(
       images.map(async (img) => {
@@ -114,17 +113,16 @@ export const ImageStudioScreen: React.FC = () => {
           const processedUrl = await processImageFilters(
             img.originalUrl,
             nextRotation,
-            img.filters
+            img.filters,
           );
           return { ...img, rotation: nextRotation, previewUrl: processedUrl };
         }
         return img;
-      })
+      }),
     );
     setImages(updated);
   };
 
-  // Баланс белого выборочно для одной фотографии
   const handleSingleWhiteBalance = async (id: string) => {
     const updated = await Promise.all(
       images.map(async (img) => {
@@ -134,12 +132,12 @@ export const ImageStudioScreen: React.FC = () => {
           const processedUrl = await processImageFilters(
             img.originalUrl,
             img.rotation,
-            nextFilters
+            nextFilters,
           );
           return { ...img, filters: nextFilters, previewUrl: processedUrl };
         }
         return img;
-      })
+      }),
     );
     setImages(updated);
   };
@@ -151,7 +149,7 @@ export const ImageStudioScreen: React.FC = () => {
           <button
             key={item.step}
             type="button"
-            className={`stepper-item ${currentStep === item.step ? 'active' : ''}`}
+            className={`stepper-item ${currentStep === item.step ? "active" : ""}`}
             onClick={() => setCurrentStep(item.step)}
           >
             {item.label}

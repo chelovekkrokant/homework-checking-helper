@@ -1,6 +1,13 @@
-import React, { useRef, useEffect } from 'react';
-import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
-import { Upload, ZoomIn, ZoomOut, RotateCcw, Image as ImageIcon, Clipboard } from 'lucide-react';
+import React, { useRef, useEffect } from "react";
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
+import {
+  Upload,
+  ZoomIn,
+  ZoomOut,
+  RotateCcw,
+  Image as ImageIcon,
+  Clipboard,
+} from "lucide-react";
 
 interface ImageViewerColumnProps {
   imageSrc: string | null;
@@ -21,34 +28,39 @@ export const ImageViewerColumn: React.FC<ImageViewerColumnProps> = ({
     }
   };
 
-  // Чтение изображения из буфера обмена по нажатию кнопки
   const handlePasteFromClipboard = async () => {
     try {
       if (!navigator.clipboard?.read) {
-        alert('Чтение буфера не поддерживается в данном браузере. Воспользуйтесь сочетанием Ctrl+V / Cmd+V.');
+        alert(
+          "Чтение буфера не поддерживается в данном браузере. Воспользуйтесь сочетанием Ctrl+V / Cmd+V.",
+        );
         return;
       }
       const clipboardItems = await navigator.clipboard.read();
       for (const item of clipboardItems) {
-        const imageType = item.types.find((type) => type.startsWith('image/'));
+        const imageType = item.types.find((type) => type.startsWith("image/"));
         if (imageType) {
           const blob = await item.getType(imageType);
-          const file = new File([blob], 'clipboard_image.png', { type: imageType });
+          const file = new File([blob], "clipboard_image.png", {
+            type: imageType,
+          });
           onImageUpload(file);
           return;
         }
       }
-      alert('В буфере обмена нет изображения. Скопируйте картинку или скриншот и повторите.');
+      alert(
+        "В буфере обмена нет изображения. Скопируйте картинку или скриншот и повторите.",
+      );
     } catch (err) {
-      console.error('Ошибка доступа к буферу обмена:', err);
-      alert('Не удалось получить доступ к буферу обмена. Разрешите доступ к буферу в браузере или используйте Ctrl+V / Cmd+V.');
+      console.error("Ошибка доступа к буферу обмена:", err);
+      alert(
+        "Не удалось получить доступ к буферу обмена. Разрешите доступ к буферу в браузере или используйте Ctrl+V / Cmd+V.",
+      );
     }
   };
 
-  // Глобальный перехват сочетания клавиш Ctrl+V / Cmd+V на экране
   useEffect(() => {
     const handlePasteEvent = (e: ClipboardEvent) => {
-      // Игнорируем вставку, если фокус находится в полях ввода текста/чисел
       const activeElement = document.activeElement;
       if (
         activeElement instanceof HTMLInputElement ||
@@ -59,16 +71,16 @@ export const ImageViewerColumn: React.FC<ImageViewerColumnProps> = ({
 
       if (e.clipboardData && e.clipboardData.files.length > 0) {
         const file = e.clipboardData.files[0];
-        if (file.type.startsWith('image/')) {
+        if (file.type.startsWith("image/")) {
           e.preventDefault();
           onImageUpload(file);
         }
       }
     };
 
-    window.addEventListener('paste', handlePasteEvent);
+    window.addEventListener("paste", handlePasteEvent);
     return () => {
-      window.removeEventListener('paste', handlePasteEvent);
+      window.removeEventListener("paste", handlePasteEvent);
     };
   }, [onImageUpload]);
 
@@ -77,7 +89,7 @@ export const ImageViewerColumn: React.FC<ImageViewerColumnProps> = ({
       <div className="viewer-top-bar">
         <div className="viewer-title">
           <ImageIcon size={18} />
-          <span>Просмотр работы (Колонка 1 — 60%)</span>
+          <span>Просмотр работы</span>
         </div>
         <div className="viewer-actions">
           <input
@@ -85,7 +97,7 @@ export const ImageViewerColumn: React.FC<ImageViewerColumnProps> = ({
             ref={fileInputRef}
             onChange={handleFileChange}
             accept="image/*"
-            style={{ display: 'none' }}
+            style={{ display: "none" }}
           />
           <button
             type="button"
@@ -102,7 +114,7 @@ export const ImageViewerColumn: React.FC<ImageViewerColumnProps> = ({
             onClick={() => fileInputRef.current?.click()}
           >
             <Upload size={14} />
-            {imageSrc ? 'Заменить файл' : 'Выбрать файл'}
+            {imageSrc ? "Заменить файл" : "Выбрать файл"}
           </button>
           {imageSrc && (
             <button
@@ -137,7 +149,9 @@ export const ImageViewerColumn: React.FC<ImageViewerColumnProps> = ({
                 <Upload size={15} /> Выбрать файл с диска
               </button>
             </div>
-            <span className="empty-subtext">Поддерживаются форматы JPG, PNG, WebP</span>
+            <span className="empty-subtext">
+              Поддерживаются форматы JPG, PNG, WebP
+            </span>
           </div>
         ) : (
           <TransformWrapper
@@ -150,19 +164,35 @@ export const ImageViewerColumn: React.FC<ImageViewerColumnProps> = ({
             {({ zoomIn, zoomOut, resetTransform }) => (
               <div className="viewer-canvas-wrapper">
                 <div className="viewer-floating-controls">
-                  <button type="button" onClick={() => zoomIn()} title="Приблизить">
+                  <button
+                    type="button"
+                    onClick={() => zoomIn()}
+                    title="Приблизить"
+                  >
                     <ZoomIn size={16} />
                   </button>
-                  <button type="button" onClick={() => zoomOut()} title="Отдалить">
+                  <button
+                    type="button"
+                    onClick={() => zoomOut()}
+                    title="Отдалить"
+                  >
                     <ZoomOut size={16} />
                   </button>
-                  <button type="button" onClick={() => resetTransform()} title="Сбросить масштаб">
+                  <button
+                    type="button"
+                    onClick={() => resetTransform()}
+                    title="Сбросить масштаб"
+                  >
                     <RotateCcw size={16} />
                   </button>
                 </div>
                 <TransformComponent
-                  wrapperStyle={{ width: '100%', height: '100%' }}
-                  contentStyle={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  wrapperStyle={{ width: "100%", height: "100%" }}
+                  contentStyle={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
                 >
                   <img
                     src={imageSrc}

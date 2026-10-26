@@ -1,20 +1,20 @@
-import React, { useState, useMemo } from 'react';
-import type { HomeworkMeta, HomeworkTask } from '../../types';
-import { calculateHomeworkSummary } from '../../utils/gradingCalculations';
-import { ImageViewerColumn } from './ImageViewerColumn';
-import { GradingPanelColumn } from './GradingPanelColumn';
+import React, { useState, useMemo } from "react";
+import type { HomeworkMeta, HomeworkTask } from "../../types";
+import { calculateHomeworkSummary } from "../../utils/gradingCalculations";
+import { ImageViewerColumn } from "./ImageViewerColumn";
+import { GradingPanelColumn } from "./GradingPanelColumn";
 
 export const HomeworkGradingScreen: React.FC = () => {
   const [imageSrc, setImageSrc] = useState<string | null>(null);
 
   const [meta, setMeta] = useState<HomeworkMeta>({
-    title: 'ДЗ Занятие 1',
+    title: "ДЗ Занятие 1",
     startNumber: 1,
   });
 
   const [tasks, setTasks] = useState<HomeworkTask[]>([
-    { id: '1', name: 'Задание 1', taskNumber: 1, earnedScore: 9, maxScore: 10 },
-    { id: '2', name: 'Задание 2', taskNumber: 2, earnedScore: 7, maxScore: 10 },
+    { id: "1", name: "Задание 1", taskNumber: 1, earnedScore: 9, maxScore: 10 },
+    { id: "2", name: "Задание 2", taskNumber: 2, earnedScore: 7, maxScore: 10 },
   ]);
 
   const handleImageUpload = (file: File) => {
@@ -26,20 +26,28 @@ export const HomeworkGradingScreen: React.FC = () => {
     setImageSrc(null);
   };
 
-  const handleMetaChange = (field: keyof HomeworkMeta, value: string | number) => {
+  const handleMetaChange = (
+    field: keyof HomeworkMeta,
+    value: string | number,
+  ) => {
     setMeta((prev) => {
       const nextMeta = { ...prev, [field]: value };
-      if (field === 'startNumber') {
-        const start = typeof value === 'number' ? Math.round(value) : parseInt(String(value), 10) || 0;
+      if (field === "startNumber") {
+        const start =
+          typeof value === "number"
+            ? Math.round(value)
+            : parseInt(String(value), 10) || 0;
         setTasks((prevTasks) =>
           prevTasks.map((t, idx) => {
             const nextNum = start + idx;
             return {
               ...t,
               taskNumber: nextNum,
-              name: t.name.startsWith('Задание ') ? `Задание ${nextNum}` : t.name,
+              name: t.name.startsWith("Задание ")
+                ? `Задание ${nextNum}`
+                : t.name,
             };
-          })
+          }),
         );
       }
       return nextMeta;
@@ -63,22 +71,22 @@ export const HomeworkGradingScreen: React.FC = () => {
 
   const handleUpdateTask = (
     id: string,
-    field: 'name' | 'earnedScore' | 'maxScore',
-    value: string | number
+    field: "name" | "earnedScore" | "maxScore",
+    value: string | number,
   ) => {
     setTasks((prev) =>
       prev.map((t): HomeworkTask => {
         if (t.id === id) {
-          if (field === 'name') {
+          if (field === "name") {
             return { ...t, name: String(value) };
           }
-          if (field === 'earnedScore' || field === 'maxScore') {
+          if (field === "earnedScore" || field === "maxScore") {
             const intVal = Math.round(Number(value)) || 0;
             return { ...t, [field]: intVal };
           }
         }
         return t;
-      })
+      }),
     );
   };
 

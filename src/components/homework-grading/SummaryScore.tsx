@@ -1,5 +1,5 @@
-import React from 'react';
-import type { HomeworkSummary } from '../../types';
+import React from "react";
+import type { HomeworkSummary } from "../../types";
 
 interface SummaryScoreProps {
   summary: HomeworkSummary;
@@ -9,15 +9,15 @@ export const SummaryScore: React.FC<SummaryScoreProps> = ({ summary }) => {
   const getGradeColor = (grade: string | number) => {
     switch (grade) {
       case 5:
-        return '#16a34a'; // зеленый
+        return "#16a34a";
       case 4:
-        return '#2563eb'; // синий
+        return "#2563eb";
       case 3:
-        return '#d97706'; // оранжевый
+        return "#d97706";
       case 2:
-        return '#dc2626'; // красный
+        return "#dc2626";
       default:
-        return '#64748b';
+        return "#64748b";
     }
   };
 
@@ -26,7 +26,8 @@ export const SummaryScore: React.FC<SummaryScoreProps> = ({ summary }) => {
       <div className="summary-row">
         <span className="summary-label">Набрано баллов:</span>
         <span className="summary-value">
-          <strong>{summary.totalEarned}</strong> из <strong>{summary.totalMax}</strong>
+          <strong>{summary.totalEarned}</strong> из{" "}
+          <strong>{summary.totalMax}</strong>
         </span>
       </div>
 
@@ -37,7 +38,7 @@ export const SummaryScore: React.FC<SummaryScoreProps> = ({ summary }) => {
         </span>
       </div>
 
-      {/* Прогресс-бар выполнения */}
+      {}
       <div className="summary-progress-bar-bg">
         <div
           className="summary-progress-bar-fill"

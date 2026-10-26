@@ -1,6 +1,11 @@
-import React, { useRef } from 'react';
-import { UploadCloud, Image as ImageIcon, Trash2, ArrowRight } from 'lucide-react';
-import type { StudioImageItem } from '../../../types';
+import React, { useRef } from "react";
+import {
+  UploadCloud,
+  Image as ImageIcon,
+  Trash2,
+  ArrowRight,
+} from "lucide-react";
+import type { StudioImageItem } from "../../../types";
 
 interface Step1UploadProps {
   images: StudioImageItem[];
@@ -28,7 +33,8 @@ export const Step1Upload: React.FC<Step1UploadProps> = ({
     <div className="step-card">
       <h3>Шаг 1: Загрузка исходных фотографий</h3>
       <p className="step-description">
-        Загрузите фотографии страниц тетради. Вы можете сразу просмотреть их и удалить ненужные кадры.
+        Загрузите фотографии страниц тетради. Вы можете сразу просмотреть их и
+        удалить ненужные кадры.
       </p>
 
       <div
@@ -42,21 +48,27 @@ export const Step1Upload: React.FC<Step1UploadProps> = ({
           ref={inputRef}
           multiple
           accept="image/*"
-          style={{ display: 'none' }}
+          style={{ display: "none" }}
           onChange={(e) => e.target.files && onUpload(e.target.files)}
         />
         <UploadCloud size={44} className="dropzone-icon" />
-        <span className="dropzone-text">Перетащите файлы сюда или нажмите для выбора</span>
-        <span className="dropzone-hint">Поддерживаются форматы JPG, PNG, WEBP</span>
+        <span className="dropzone-text">
+          Перетащите файлы сюда или нажмите для выбора
+        </span>
+        <span className="dropzone-hint">
+          Поддерживаются форматы JPG, PNG, WEBP
+        </span>
       </div>
 
-      {/* Preview загруженных фото с кнопкой удаления */}
+      {}
       {images.length > 0 && (
         <div className="upload-preview-section">
           <div className="upload-preview-header">
             <div className="summary-left">
               <ImageIcon size={18} />
-              <span>Загружено фотографий: <strong>{images.length}</strong></span>
+              <span>
+                Загружено фотографий: <strong>{images.length}</strong>
+              </span>
             </div>
             <button type="button" className="primary-btn" onClick={onNext}>
               Перейти к обработке <ArrowRight size={16} />
@@ -67,7 +79,11 @@ export const Step1Upload: React.FC<Step1UploadProps> = ({
             {images.map((img, idx) => (
               <div key={img.id} className="upload-preview-card">
                 <span className="upload-preview-num">#{idx + 1}</span>
-                <img src={img.previewUrl} alt={`Превью ${idx + 1}`} className="upload-preview-img" />
+                <img
+                  src={img.previewUrl}
+                  alt={`Превью ${idx + 1}`}
+                  className="upload-preview-img"
+                />
                 <button
                   type="button"
                   className="upload-delete-btn"

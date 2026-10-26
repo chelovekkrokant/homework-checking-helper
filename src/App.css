@@ -1,4 +1,3 @@
-/* ==================== Базовый контейнер приложения ==================== */
 .app-root {
   display: flex;
   flex-direction: column;
@@ -7,10 +6,11 @@
   overflow: hidden;
   background-color: #f4f5f7;
   color: #1e293b;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
 }
 
-/* ==================== Шапка (Header) ==================== */
 .app-header {
   height: 56px;
   background-color: #ffffff;
@@ -63,7 +63,6 @@
   border-color: #2563eb;
 }
 
-/* ==================== Контейнеры экранов ==================== */
 .app-main {
   flex: 1;
   overflow: hidden;
@@ -76,7 +75,6 @@
   box-sizing: border-box;
 }
 
-/* ==================== ЭКРАН 1: Студия подготовки ==================== */
 .studio-screen {
   display: flex;
   flex-direction: column;
@@ -140,7 +138,6 @@
   align-items: flex-start;
 }
 
-/* Шаг 1: Загрузка и превью */
 .upload-dropzone {
   border: 2px dashed #94a3b8;
   border-radius: 8px;
@@ -243,7 +240,6 @@
   background: #dc2626;
 }
 
-/* Шаг 2: Фильтры и поворот */
 .batch-controls-box {
   background: #f8fafc;
   border: 1px solid #e2e8f0;
@@ -345,7 +341,6 @@
   border-color: #2563eb !important;
 }
 
-/* Шаг 3: Лист А4 со свободным размещением */
 .canvas-insert-tray {
   background: #f1f5f9;
   border-radius: 8px;
@@ -488,7 +483,6 @@
   margin: -5px;
 }
 
-/* Модальное окно кадрирования */
 .crop-modal-overlay {
   position: fixed;
   inset: 0;
@@ -534,7 +528,6 @@
   gap: 10px;
 }
 
-/* Шаг 4: Экспорт */
 .export-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -580,14 +573,12 @@
   flex: 1;
 }
 
-/* ==================== ЭКРАН 2: Оценивание (Сплит 60% / 40%) ==================== */
 .grading-screen-layout {
   display: grid;
   grid-template-columns: 60% 40%;
   height: 100%;
 }
 
-/* Левая колонка (60%): Вьюер */
 .grading-viewer-column {
   background-color: #0f172a;
   color: #f8fafc;
@@ -710,7 +701,6 @@
   background: #334155;
 }
 
-/* Правая колонка (40%): Журнал */
 .grading-panel-column {
   background-color: #ffffff;
   display: flex;
@@ -719,7 +709,7 @@
   max-height: 100%;
   padding: 16px 20px;
   box-sizing: border-box;
-  overflow: hidden; /* Запрещаем внешний скролл всей колонки */
+  overflow: hidden;
 }
 
 .grading-meta-box {
@@ -730,7 +720,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  flex-shrink: 0; /* Шапка всегда на виду */
+  flex-shrink: 0;
 }
 
 .tasks-list-header {
@@ -739,13 +729,12 @@
   justify-content: space-between;
   margin-top: 12px;
   margin-bottom: 8px;
-  flex-shrink: 0; /* Заголовок списка не сжимается */
+  flex-shrink: 0;
 }
 
-/* Скролл только внутри списка заданий */
 .tasks-scroll-container {
   flex: 1 1 0%;
-  min-height: 0; /* КРИТИЧНО: заставляет flex-элемент скроллиться внутри себя, не распирая высоту */
+  min-height: 0;
   overflow-y: auto;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
@@ -753,10 +742,9 @@
   background-color: #fcfcfd;
 }
 
-/* Фиксированный нижний блок с оценкой */
 .grading-footer {
   margin-top: 12px;
-  flex-shrink: 0; /* Блок итоговой оценки всегда прибит к низу и не уплывает */
+  flex-shrink: 0;
 }
 
 .input-group {
@@ -818,7 +806,6 @@
   padding: 16px;
 }
 
-/* ==================== Карточка задания (TaskItemRow) ==================== */
 .task-item-card {
   background-color: #ffffff;
   border: 1px solid #e2e8f0;
@@ -886,7 +873,6 @@
   background-color: #fee2e2;
 }
 
-/* Двухколоночный grid для баллов */
 .task-item-controls-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1025,8 +1011,6 @@
   border-color: #2563eb;
 }
 
-/* ==================== Итоговый расчет (SummaryScore) ==================== */
-
 .summary-score-card {
   background: #f8fafc;
   border: 1px solid #cbd5e1;
@@ -1062,7 +1046,9 @@
 
 .summary-progress-bar-fill {
   height: 100%;
-  transition: width 0.3s ease, background-color 0.3s ease;
+  transition:
+    width 0.3s ease,
+    background-color 0.3s ease;
 }
 
 .summary-grade-row {
@@ -1082,7 +1068,6 @@
   font-weight: 700;
 }
 
-/* ==================== Общие кнопки и элементы ==================== */
 .primary-btn {
   background-color: #2563eb;
   color: #ffffff;
